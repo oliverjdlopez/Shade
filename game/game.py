@@ -51,4 +51,4 @@ and therefore how complex the search tree would roughly be"""
 def added_depth(board):
     return math.floor(1/(eval.materialAndStage(board,board.turn, not board.turn)[1]))
 
-play_self(board)
+play_human(board)
