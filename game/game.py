@@ -25,7 +25,6 @@ def play_self(board):
         tuple=eval.negamax(board,depth, -10000, 10000)
         computer_move=tuple[1]
         board.push(computer_move)
-        print(eval.structure_eval(board))
         node=node.add_variation(computer_move)
         print("The engine plays" +computer_move.uci())
         if board.turn:
@@ -51,4 +50,4 @@ and therefore how complex the search tree would roughly be"""
 def added_depth(board):
     return math.floor(1/(eval.materialAndStage(board,board.turn, not board.turn)[1]))
 
-play_human(board)
+play_self(board)

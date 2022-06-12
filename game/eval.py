@@ -1,33 +1,6 @@
 import chess
 
 
-def negamax(board,depth,alpha, beta):
-    if board.is_game_over() or board.can_claim_draw():
-        if board.outcome()==None:
-            return 0,None
-        if board.outcome()==board.turn:
-            return -1000,None
-        else:
-            return 1000,None
-    if depth==0:
-        tuple=shallow_eval(board)
-        return tuple[0],tuple[1]
-    move_list=prioritize(board)
-    tuple=(-10000000000000,None)
-    for move in move_list:
-        board.push(move)
-        eval=-negamax(board, depth-1, -beta, -alpha)[0]
-        alpha=max(eval, alpha)
-        if (eval>tuple[0]):
-            tuple=(eval,move)
-        if alpha>=beta:
-            board.pop()
-            break
-        board.pop()
-    return tuple
-
-
-
 """Evaluation function for a given position based purely off computer's 'intuition'.
 Evaluation is from the perspective of the player with the turn.
  Returns a tuple of (evaluation, None)."""
@@ -165,51 +138,3 @@ def structure_eval(board,has_move, next_move):
 
 def king_safety(board, has_move, next_move):
     return 0
-
-
-"""Recursive evaluation function for a given position, recursed depth number of times.
-Returns tuple of evaluation with best play and best move. HAS BEEN REPLACED BY NEGAMAX """
-def rec_eval(board, depth):
-    """First evaluate if game is drawn, or if one color has won"""
-    if board.is_game_over() or board.can_claim_draw():
-        if board.outcome()==None:
-            return 0,None
-        if board.outcome():
-            return 1000,None
-        if not board.outcome():
-            return -1000,None
-    if depth==0:
-        return shallow_eval(board)
-    move_list=prune(board)
-    tuple=(None,None)
-    if board.turn:
-        for move in move_list:
-            if tuple==(None,None):
-                board.push(move)
-                tuple=(rec_eval(board,depth-1)[0],move)
-                board.pop()
-            else:
-                """if white to move, returns best play for white"""
-                """print("baord.turn accessed")"""
-                board.push(move)
-                eval=rec_eval(board, depth-1)[0]
-                board.pop()
-                if eval > tuple[0]:
-                    tuple=(eval,move)
-
-            """if black to move, return best play for black"""
-    if not board.turn:
-        for move in move_list:
-            if tuple==(None,None):
-                board.push(move)
-                tuple=(rec_eval(board,depth-1)[0],move)
-                board.pop()
-            else:
-                """if white to move, returns best play for white"""
-                """print("baord.turn accessed")"""
-                board.push(move)
-                eval=rec_eval(board, depth-1)[0]
-                board.pop()
-                if eval<tuple[0]:
-                    tuple=(eval,move)
-    return tuple
