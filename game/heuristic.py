@@ -14,23 +14,10 @@ def shallow_eval(board):
     territory=territory_eval(board, has_move, next_move)
     structure=structure_eval(board,has_move, next_move)
     move_advantage=.2 #maybe this can become a function
-    #hanging=hanging_material(board, has_move, next_move)
-    return (material+(0.1*mobility)+(0.2*territory)+move_advantage+stage*structure, None)
+    hanging=hanging_material(board, has_move, next_move)
+    return (material-hanging+(0.1*mobility)+(0.2*territory)+move_advantage+stage*structure, None)
 
-"""takes a board, and returns a prioritized list of promising legal moves.TODO: CAN BE OPTIMIZED
-WITH NEGAMAX TO AVOID UNNCESSARY REALLOCATIONS FOR LISTS"""
-def prioritize(board):
-    checks=[]
-    captures=[]
-    other=[]
-    for move in board.legal_moves:
-        if board.gives_check(move):
-            checks.append(move)
-        elif board.is_capture(move):
-            captures.append(move)
-        else:
-            other.append(move)
-    return checks+captures+other
+
 
 """returns the material difference between the player with the move and the player without the move.
 In order to properly optimize, also returns the game stage based on the amount of
@@ -104,35 +91,55 @@ def territory_eval(board, has_move, next_move):
     return mover_territory-next_territory
 
 def hanging_material(board, has_move, next_move):
-    hanging=0
-    return hanging
+    """This function is not implemented fully. It does not account for trade-order
+    or anything that's forcing yet."""
+    material= 0
+    is_hanging=0
+    for rook in board.pieces(chess.ROOK,has_move):
+        is_hanging = 1 if len(board.attackers(has_move, rook))<len(board.attackers(next_move,rook)) else 0
+        material+=5*is_hanging
+    for pawn in board.pieces(chess.PAWN, has_move):
+        is_hanging = 1 if len(board.attackers(has_move, pawn))<len(board.attackers(next_move,pawn)) else 0
+        material+=1*is_hanging
+    for bishop in board.pieces(chess.BISHOP,has_move):
+        is_hanging = 1 if len(board.attackers(has_move, bishop))<len(board.attackers(next_move,bishop)) else 0
+        material+=3*is_hanging
+    for knight in board.pieces(chess.KNIGHT,has_move):
+        is_hanging = 1 if len(board.attackers(has_move, knight))<len(board.attackers(next_move,knight)) else 0
+        material+=3*is_hanging
+    for queen in board.pieces(chess.QUEEN, has_move):
+        is_hanging = 1 if len(board.attackers(has_move, queen))<len(board.attackers(next_move,queen)) else 0
+        material+=9*is_hanging
+    return material
 
 """takes in real number, returns a modified sigmoid function to work on the range of
 0 to 78"""
 def adjusted_sigmoid(num):
     return 1/(1+2.71828182845**(-(num-20)/10))
 
+
+"""returns the difference between how many doubled pawns the mover has vs the oppponent"""
 def structure_eval(board,has_move, next_move):
     mover_structure=0
     next_structure=0
     files=[]
-    squares=board.pieces(chess.PAWN, has_move)
+    pawns=board.pieces(chess.PAWN, has_move)
     doubled=0
-    for s in squares:
+    for p in pawns:
         mover_structure+=1
-        if s in files:
+        if p in files:
             doubled +=1
         else:
-            files.append(chess.square_file(s))
+            files.append(chess.square_file(p))
     mover_structure=mover_structure-(0.5)*doubled
     doubled=0
-    squares=board.pieces(chess.PAWN, has_move)
-    for s in squares:
+    pawns=board.pieces(chess.PAWN, has_move)
+    for p in pawns:
         next_structure+=1
-        if s in files:
+        if p in files:
             doubled +=1
         else:
-            files.append(chess.square_file(s))
+            files.append(chess.square_file(p))
     next_structure=next_structure-(0.5)*doubled
     return mover_structure-next_structure
 
