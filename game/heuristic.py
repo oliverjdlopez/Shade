@@ -1,4 +1,5 @@
 import chess
+import math
 
 
 """Evaluation function for a given position based purely off computer's 'intuition'.
@@ -17,6 +18,12 @@ def shallow_eval(board):
     hanging=hanging_material(board, has_move, next_move)
     return (material-hanging+(0.1*mobility)+(0.2*territory)+move_advantage+stage*structure, None)
 
+
+
+"""takes in real number, returns a modified sigmoid function to work on the range of
+0 to 78"""
+def adjusted_sigmoid(num):
+    return 1/(1+math.e**(-(num-20)/10))
 
 
 """returns the material difference between the player with the move and the player without the move.
@@ -92,7 +99,8 @@ def territory_eval(board, has_move, next_move):
 
 def hanging_material(board, has_move, next_move):
     """This function is not implemented fully. It does not account for trade-order
-    or anything that's forcing yet."""
+    or anything that's forcing yet. Further, doesn't count a queen as hanging if, for example,
+    it is defended by a pawn but can be taken by a bishop. Also it's really slow but not sure if there is a better way to go about that"""
     material= 0
     is_hanging=0
     for rook in board.pieces(chess.ROOK,has_move):
@@ -112,10 +120,7 @@ def hanging_material(board, has_move, next_move):
         material+=9*is_hanging
     return material
 
-"""takes in real number, returns a modified sigmoid function to work on the range of
-0 to 78"""
-def adjusted_sigmoid(num):
-    return 1/(1+2.71828182845**(-(num-20)/10))
+
 
 
 """returns the difference between how many doubled pawns the mover has vs the oppponent"""

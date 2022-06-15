@@ -16,11 +16,11 @@ def prioritize(board):
             other.append(move)
     return checks+captures+other
 
-def trim_sacs(board): 
+def trim(board): 
     return False
 
 
-def negamax(board,depth,alpha, beta):
+def negamax(board,depth,alpha, beta, current_line: list):
     if board.is_game_over() or board.can_claim_draw():
         if board.outcome()==None:
             return 0,None
@@ -30,16 +30,22 @@ def negamax(board,depth,alpha, beta):
             return 1000,None
     if depth==0:
         return heuristic.shallow_eval(board)
-    move_list=prioritize(board)
-    tuple=(-10000000000000,None)
+    #move_list=prioritize(board)
+    move_list=board.legal_moves
+    new_line=current_line
+    out=(-10000000000000,"None",new_line)
     for move in move_list:
         board.push(move)
-        evaluation=-negamax(board, depth-1, -beta, -alpha)[0]
+        new_line.append(move)
+        evaluation=-negamax(board, depth-1, -beta, -alpha, new_line)[0]
         alpha=max(evaluation, alpha)
-        if (evaluation>tuple[0]):
-            tuple=(evaluation,move)
+        if (evaluation>out[0]):
+            out=(evaluation,move,new_line)
         if alpha>=beta:
             board.pop()
+            new_line.pop()
             break
         board.pop()
-    return tuple
+        new_line.pop()
+    out=(out[0], out[1], out[2].append(out[1]))
+    return out
