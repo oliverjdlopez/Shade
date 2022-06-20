@@ -7,6 +7,14 @@ Evaluation is from the perspective of the player with the turn.
 It is the same type as the search function, but because it is a shallow eval, does not know what the best move is. Therefore,
 returns a tuple of (evaluation, None)."""
 def shallow_eval(board):
+    #if terminal node
+    if board.is_game_over():
+        if board.outcome()==None:
+            return (0,None, line)
+        if board.outcome()==board.turn:
+            return(-1000,None, line)
+        else:
+            return (1000,None, line)
     has_move=board.turn
     next_move= not has_move
     tuple=materialAndStage(board,has_move,next_move)

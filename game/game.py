@@ -38,11 +38,11 @@ def play_self(board):
     base_depth=3
     node=set_up(board,base_depth)
     while not board.is_game_over() and not board.can_claim_draw():
-        depth=base_depth+added_depth(board)
+        depth=base_depth +added_depth(board)
         depth=base_depth
         tuple=search.negamax(board, depth, -1000, 1000, [])
         computer_move=tuple[1]
-        board.push(computer_move)
+        
         node=node.add_variation(computer_move)
         print("The engine plays" +computer_move.uci())
         if board.turn:
@@ -50,6 +50,7 @@ def play_self(board):
         else:
             print("it evaluates the position as " + str(-tuple[0]))
         print("It thinks that the best line is :" + str(tuple[2]))
+        board.push(computer_move)
         print("Here is the pgn so far:")
         print(file)
     print("the game is over")
