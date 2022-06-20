@@ -8,6 +8,7 @@ import math
 
 """TODO:
 1)implement other functions in evaluation module. See how well that improves the accuracy.
+2)sac bug
 2) Do performance tests using perft. See where I can clean up efficiency
 3)impleemnt better pruning so engine can go deeper. Good things to explore on chess wiki and similar sites
 4) Implement tablebase consulting?
@@ -22,7 +23,7 @@ def play_human(board):
             string_input=input("That is not a legal move. What is your move?")
             player_move=chess.Move.from_uci(string_input)
         board.push(player_move)
-        computer_move=search.negamax(board,3,-10000, 10000, [])[1]
+        computer_move=search.negamax(board,  3, board.turn,-10000, 10000, [])[1]
         board.push(computer_move)
         print("The engine plays" +computer_move.uci())
     print("the game is over")
@@ -39,7 +40,7 @@ def play_self(board):
     while not board.is_game_over() and not board.can_claim_draw():
         depth=base_depth+added_depth(board)
         depth=base_depth
-        tuple=search.negamax(board,depth, -10000, 10000, [])
+        tuple=search.negamax(board, depth, -1000, 1000, [])
         computer_move=tuple[1]
         board.push(computer_move)
         node=node.add_variation(computer_move)
@@ -56,7 +57,7 @@ def play_self(board):
     #print(file)
 
 def set_up(board,depth):
-    first_move=search.negamax(board,depth,-10000,10000, [])[1]
+    first_move=search.negamax(board, depth, -10000,10000, [])[1]
     board.push(first_move)
     print("The engine plays" + first_move.uci())
     node=file.add_variation(first_move)

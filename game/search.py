@@ -20,32 +20,57 @@ def trim(board):
     return False
 
 
-def negamax(board,depth,alpha, beta, current_line: list):
-    if board.is_game_over() or board.can_claim_draw():
+
+""" A class to represent a line 
+
+class Line: 
+    def __init__(self): 
+        self.moves=[]
+
+    def __str__(self):
+        print(self.moves)
+
+    def add (self, move): 
+        self.append(move)
+
+    def remove(self):
+        self.pop
+"""
+
+
+
+"""Search function with alpha-beta pruning. Currently not handling three-fold repetition
+or fifty-move rule draws because checking is slow"""
+def negamax(board,depth,alpha, beta, line):
+    #if terminal node
+    if board.is_game_over():
         if board.outcome()==None:
-            return 0,None
+            return (0,None, line)
         if board.outcome()==board.turn:
-            return -1000,None
+            return(-1000,None, line)
         else:
-            return 1000,None
+            return (1000,None, line)
+    #if recursion depth reached
     if depth==0:
-        return heuristic.shallow_eval(board)
-    #move_list=prioritize(board)
-    move_list=board.legal_moves
-    new_line=current_line
-    out=(-10000000000000,"None",new_line)
+            return (heuristic.shallow_eval(board)[0], None, line)
+    #otherwise, recurse.
+    move_list=prioritize(board)
+    #move_list=board.legal_moves
+    out=(-1000,None, line)
     for move in move_list:
         board.push(move)
-        new_line.append(move)
-        evaluation=-negamax(board, depth-1, -beta, -alpha, new_line)[0]
-        alpha=max(evaluation, alpha)
-        if (evaluation>out[0]):
-            out=(evaluation,move,new_line)
+        line.append(move)
+        child=negamax(board, depth-1, -beta, -alpha, line)
+        new_evaluation=-(child[0])
+        new_line=child[2]
+        old_evaluation=out[0]
+        if (new_evaluation>old_evaluation):
+            out=(new_evaluation, move, new_line.copy())
+        alpha=max(new_evaluation, alpha)
         if alpha>=beta:
             board.pop()
-            new_line.pop()
+            line.pop()
             break
         board.pop()
-        new_line.pop()
-    out=(out[0], out[1], out[2].append(out[1]))
+        line.pop()
     return out

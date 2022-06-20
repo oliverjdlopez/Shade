@@ -4,19 +4,20 @@ import math
 
 """Evaluation function for a given position based purely off computer's 'intuition'.
 Evaluation is from the perspective of the player with the turn.
- Returns a tuple of (evaluation, None)."""
+It is the same type as the search function, but because it is a shallow eval, does not know what the best move is. Therefore,
+returns a tuple of (evaluation, None)."""
 def shallow_eval(board):
     has_move=board.turn
     next_move= not has_move
     tuple=materialAndStage(board,has_move,next_move)
-    material=tuple[0]-hanging_material(board,has_move,next_move)
+    material=tuple[0]
     stage=1-tuple[1]
     mobility=mobility_eval(board, has_move, next_move)
     territory=territory_eval(board, has_move, next_move)
     structure=structure_eval(board,has_move, next_move)
     move_advantage=.2 #maybe this can become a function
-    hanging=hanging_material(board, has_move, next_move)
-    return (material-hanging+(0.1*mobility)+(0.2*territory)+move_advantage+stage*structure, None)
+    #hanging=hanging_material(board, has_move, next_move)
+    return (material+(0.01*mobility)+(0.05*territory)+move_advantage+(stage*structure), None)
 
 
 
@@ -55,7 +56,6 @@ def materialAndStage(board,has_move, next_move):
     for queen in board.pieces(chess.QUEEN, next_move):
         other_material+=9
     total_material=mover_material+other_material
-
     return mover_material-other_material, adjusted_sigmoid(total_material)
 
 
@@ -150,3 +150,26 @@ def structure_eval(board,has_move, next_move):
 
 def king_safety(board, has_move, next_move):
     return 0
+
+
+def test_eval(board):
+    has_move=board.turn
+    next_move= not has_move
+    tuple=materialAndStage(board,has_move,next_move)
+    material=tuple[0]
+    stage=1-tuple[1]
+    mobility=mobility_eval(board, has_move, next_move)
+    territory=territory_eval(board, has_move, next_move)
+    structure=structure_eval(board,has_move, next_move)
+    move_advantage=.2 #maybe this can become a function
+    if board.turn:
+        print("It is white to move")
+    else:
+        print("It is black to move")
+    print("The material advantage is " + str(material))
+    print("The mobility advantage is " + str(mobility))
+    print("The territory advnatge is " + str(territory))
+    print("The structure advantage is " + str(structure))
+    print("The stage of the game is " + str(stage))
+    print("The total evaluation of the position is " + str((material+(0.01*mobility)+(0.05*territory)+move_advantage+(stage*structure))))
+    return (material+(0.01*mobility)+(0.05*territory)+move_advantage+(stage*structure), None)
