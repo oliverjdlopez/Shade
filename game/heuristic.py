@@ -10,11 +10,11 @@ def shallow_eval(board):
     #if terminal node
     if board.is_game_over():
         if board.outcome()==None:
-            return (0,None, line)
+            return 0
         if board.outcome()==board.turn:
-            return(-1000,None, line)
+            return 1000
         else:
-            return (1000,None, line)
+            return -1000
     has_move=board.turn
     next_move= not has_move
     tuple=materialAndStage(board,has_move,next_move)
@@ -25,7 +25,7 @@ def shallow_eval(board):
     structure=structure_eval(board,has_move, next_move)
     move_advantage=.2 #maybe this can become a function
     #hanging=hanging_material(board, has_move, next_move)
-    return (material+(0.01*mobility)+(0.05*territory)+move_advantage+(stage*structure), None)
+    return material+(0.01*mobility)+(0.05*territory)+move_advantage+(stage*structure)
 
 
 

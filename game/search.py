@@ -42,12 +42,15 @@ class Line:
 """Search function with alpha-beta pruning. Currently not handling three-fold repetition
 or fifty-move rule draws because checking is slow"""
 def negamax(board,depth,alpha, beta, line):
+    if board.is_game_over(): 
+        return (heuristic.shallow_eval(board), None, line)
     #if recursion depth reached
     if depth==0:
-            return (heuristic.shallow_eval(board)[0], None, line)
+            return (heuristic.shallow_eval(board), None, line)
     #otherwise, recurse.
     move_list=prioritize(board)
-    out=(-1000,None, line)
+    #the initialized out value must be greater then the initialized alpha value or it can return as None
+    out=(-10000,None, line)
     for move in move_list:
         board.push(move)
         line.append(move)

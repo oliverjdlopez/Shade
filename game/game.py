@@ -41,8 +41,7 @@ def play_self(board):
         depth=base_depth +added_depth(board)
         depth=base_depth
         tuple=search.negamax(board, depth, -1000, 1000, [])
-        computer_move=tuple[1]
-        
+        computer_move=tuple[1] 
         node=node.add_variation(computer_move)
         print("The engine plays" +computer_move.uci())
         if board.turn:
