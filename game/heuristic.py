@@ -7,19 +7,19 @@ Evaluation is from the perspective of the player with the turn.
 It is the same type as the search function, but because it is a shallow eval, does not know what the best move is. Therefore,
 returns a tuple of (evaluation, None)."""
 def shallow_eval(board):
+    has_move=board.turn
+    next_move= not has_move
     #if terminal node
-    if board.is_game_over():
+    if board.is_game_over() or board.can_claim_draw():
         if board.outcome()==None:
             return 0
-        if board.outcome()==board.turn:
+        if board.outcome()==has_move:
             return 1000
         else:
             return -1000
-    has_move=board.turn
-    next_move= not has_move
     tuple=materialAndStage(board,has_move,next_move)
     material=tuple[0]
-    stage=1-tuple[1]
+    stage=1-tuple[1] #heuristic for what stage the game is. Higher values of stage represent a later game point
     mobility=mobility_eval(board, has_move, next_move)
     territory=territory_eval(board, has_move, next_move)
     structure=structure_eval(board,has_move, next_move)

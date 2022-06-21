@@ -55,7 +55,7 @@ def speed_test():
     print("NPS w/ heuristic: " + str(total_nodes/total_time))
     print("Nodes analyzed: " + str(total_nodes))
     print("Total time spent: " + str(total_time))
-  else: print("That's not a valid input. run the program again and respond with either with or without ")
+  else: print("That's not a valid input. Run the program again and respond with either with or without ")
 
 
 

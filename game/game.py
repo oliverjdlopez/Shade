@@ -32,10 +32,10 @@ def play_human(board):
 """searches to higher nad higher depths depending on how much material is on the board,
 and therefore how complex the search tree would roughly be"""
 def added_depth(board):
-    return math.floor(1/(heuristic.materialAndStage(board,board.turn, not board.turn)[1]))
+    return math.floor(2/(heuristic.materialAndStage(board,board.turn, not board.turn)[1]))
 
 def play_self(board):
-    base_depth=3
+    base_depth=4
     node=set_up(board,base_depth)
     while not board.is_game_over() and not board.can_claim_draw():
         depth=base_depth +added_depth(board)
